@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>程序员个人介绍 - 技术简历</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --text-color: #1f2937;
+            --light-bg: #f8fafc;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header-content h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header-content .subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .header-content p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .contact-info a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            transition: background 0.3s;
+        }
+
+        .contact-info a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .skill-category h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .skill-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-tag {
+            background: var(--light-bg);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .project-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .project-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .tech-tag {
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            padding-left: 50px;
+        }
+
+        .timeline-date {
+            position: absolute;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .timeline-content {
+            background: var(--light-bg);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        footer {
+            background: var(--text-color);
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .header-content h1 {
+                font-size: 2.2rem;
+            }
+
+            .header-content .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .section {
+                padding: 25px;
+            }
+
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <h1>张明</h1>
+            <div class="subtitle">全栈开发工程师 & 技术爱好者</div>
+            <p>拥有 5 年全栈开发经验，专注于构建高性能、可扩展的 Web 应用程序。热爱学习新技术，享受解决复杂技术问题的过程。</p>
+
+            <div class="contact-info">
+                <a href="mailto:zhangming@example.com">
+                    <i class="fas fa-envelope"></i> zhangming@example.com
+                </a>
+                <a href="tel:+8613800138000">
+                    <i class="fas fa-phone"></i> +86 138 0013 8000
+                </a>
+                <a href="https://github.com/zhangming" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+                <a href="https://linkedin.com/in/zhangming" target="_blank">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="section">
+            <h2 class="section-title">技术技能</h2>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>前端技术</h3>
+                    <div class="skill-items">
+                        <span class="skill-tag">React</span>
+                        <span class="skill-tag">Vue.js</span>
+                        <span class="skill-tag">TypeScript</span>
+                        <span class="skill-tag">Next.js</span>
+                        <span class="skill-tag">Tailwind CSS</span>
+                        <span class="skill-tag">Webpack</span>
+                    </div>
+                </div>
+
+                <div class="skill-category">
+                    <h3>后端技术</h3>
+                    <div class="skill-items">
+                        <span class="skill-tag">Node.js</span>
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">Java</span>
+                        <span class="skill-tag">Spring Boot</span>
+                        <span class="skill-tag">Express</span>
+                        <span class="skill-tag">Django</span>
+                    </div>
+                </div>
+
+                <div class="skill-category">
+                    <h3>数据库</h3>
+                    <div class="skill-items">
+                        <span class="skill-tag">MySQL</span>
+                        <span class="skill-tag">PostgreSQL</span>
+                        <span class="skill-tag">MongoDB</span>
+                        <span class="skill-tag">Redis</span>
+                        <span class="skill-tag">Elasticsearch</span>
+                    </div>
+                </div>
+
+                <div class="skill-category">
+                    <h3>DevOps & 工具</h3>
+                    <div class="skill-items">
+                        <span class="skill-tag">Docker</span>
+                        <span class="skill-tag">Kubernetes</span>
+                        <span class="skill-tag">Git</span>
+                        <span class="skill-tag">Jenkins</span>
+                        <span class="skill-tag">AWS</span>
+                        <span class="skill-tag">Linux</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">项目经验</h2>
+
+            <div class="project-card">
+                <h3>电商后台管理系统</h3>
+                <div class="project-tech">
+                    <span class="tech-tag">React</span>
+                    <span class="tech-tag">TypeScript</span>
+                    <span class="tech-tag">Node.js</span>
+                    <span class="tech-tag">PostgreSQL</span>
+                    <span class="tech-tag">Docker</span>
+                </div>
+                <p>为大型电商平台开发的全功能后台管理系统，支持商品管理、订单处理、用户管理、数据统计等功能。系统日处理订单量超过 10 万单。</p>
+                <p>主要职责：负责前端架构设计、后端 API 开发、数据库优化和部署运维。</p>
+            </div>
+
+            <div class="project-card">
+                <h3>实时协作文档编辑器</h3>
+                <div class="project-tech">
+                    <span class="tech-tag">Vue.js</span>
+                    <span class="tech-tag">WebSocket</span>
+                    <span class="tech-tag">Node.js</span>
+                    <span class="tech-tag">MongoDB</span>
+                    <span class="tech-tag">Redis</span>
+                </div>
+                <p>类似 Google Docs 的实时协作编辑器，支持多人同时编辑、版本控制、实时聊天和权限管理。采用 CRDT 算法解决冲突。</p>
+                <p>主要贡献：实现实时同步机制、优化前端性能、设计数据库 schema。</p>
+            </div>
+
+            <div class="project-card">
+                <h3>微服务架构的物流系统</h3>
+                <div class="project-tech">
+                    <span class="tech-tag">Java</span>
+                    <span class="tech-tag">Spring Cloud</span>
+                    <span class="tech-tag">Kubernetes</span>
+                    <span class="tech-tag">MySQL</span>
+                    <span class="tech-tag">RabbitMQ</span>
+                </div>
+                <p>为物流公司设计的分布式微服务系统，包含订单管理、仓储管理、配送跟踪、支付结算等 12 个微服务。</p>
+                <p>主要负责：微服务架构设计、服务间通信机制、容器化部署和监控系统搭建。</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">工作经历</h2>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">2022 - 至今</div>
+                    <div class="timeline-content">
+                        <h3>高级全栈工程师 - 字节跳动</h3>
+                        <p>负责核心业务系统的架构设计和开发，带领 5 人技术团队完成多个重要项目。优化系统性能，将 API 响应时间降低 40%。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">2019 - 2022</div>
+                    <div class="timeline-content">
+                        <h3>后端开发工程师 - 阿里巴巴</h3>
+                        <p>参与电商平台后端服务开发，专注于高并发场景下的系统优化。重构支付模块，提高系统吞吐量 3 倍。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">2017 - 2019</div>
+                    <div class="timeline-content">
+                        <h3>前端开发工程师 - 腾讯</h3>
+                        <p>负责 Web 应用前端开发，参与设计系统组件库建设。主导移动端 H5 项目，用户量超过 1000 万。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">教育背景</h2>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">2013 - 2017</div>
+                    <div class="timeline-content">
+                        <h3>计算机科学与技术 - 本科</h3>
+                        <p>清华大学，GPA: 3.8/4.0</p>
+                        <p>主修课程：数据结构、算法设计、计算机网络、操作系统、数据库系统、软件工程</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">认证与奖项</div>
+                    <div class="timeline-content">
+                        <h3>专业认证</h3>
+                        <p>AWS 解决方案架构师 - 专业级</p>
+                        <p>Oracle Java 认证程序员</p>
+                        <p>2020 年度公司技术创新奖</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 张明 - 个人技术简历</p>
+            <p style="margin-top: 10px; opacity: 0.8;">保持学习，持续进步</p>
+            <div style="margin-top: 20px;">
+                <a href="mailto:zhangming@example.com" style="color: white; margin: 0 10px;">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="https://github.com/zhangming" target="_blank" style="color: white; margin: 0 10px;">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://linkedin.com/in/zhangming" target="_blank" style="color: white; margin: 0 10px;">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://twitter.com/zhangming" target="_blank" style="color: white; margin: 0 10px;">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 简单的交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 项目卡片点击效果
+            const projectCards = document.querySelectorAll('.project-card');
+            projectCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // 技能标签悬停效果
+            const skillTags = document.querySelectorAll('.skill-tag');
+            skillTags.forEach(tag => {
+                tag.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.2)';
+                });
+
+                tag.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                    this.style.boxShadow = '';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

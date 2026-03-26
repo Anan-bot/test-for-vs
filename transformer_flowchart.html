@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformer 模型架构流程图</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #7c3aed;
+            --attention-color: #f59e0b;
+            --feedforward-color: #10b981;
+            --embedding-color: #8b5cf6;
+            --normalization-color: #3b82f6;
+            --residual-color: #ef4444;
+            --text-color: #1f2937;
+            --light-bg: #f8fafc;
+            --border-color: #e5e7eb;
+            --card-bg: white;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+            padding-bottom: 40px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .header-content p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .flowchart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        /* 编码器层样式 */
+        .encoder-section, .decoder-section {
+            margin: 40px 0;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .encoder-layers, .decoder-layers {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .layer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .layer-box {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            width: 280px;
+            text-align: center;
+            position: relative;
+        }
+
+        .layer-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .layer-box h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .layer-box p {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .component-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .component-list li {
+            padding: 6px 0;
+            font-size: 0.85rem;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        /* 组件特定样式 */
+        .input-embedding { border-left: 6px solid var(--embedding-color); }
+        .positional-encoding { border-left: 6px solid var(--embedding-color); }
+        .multi-head-attention { border-left: 6px solid var(--attention-color); }
+        .feed-forward { border-left: 6px solid var(--feedforward-color); }
+        .layer-norm { border-left: 6px solid var(--normalization-color); }
+        .add-norm { border-left: 6px solid var(--normalization-color); }
+        .residual-connection { border-left: 6px solid var(--residual-color); }
+        .output-layer { border-left: 6px solid var(--primary-color); }
+
+        /* 连接线样式 */
+        .connection {
+            position: relative;
+            height: 40px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .connection-line {
+            height: 2px;
+            background: var(--primary-color);
+            width: 80%;
+            position: relative;
+        }
+
+        .connection-line::before {
+            content: '↓';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .horizontal-connection {
+            width: 40px;
+            height: 2px;
+            background: var(--primary-color);
+            position: relative;
+        }
+
+        .horizontal-connection::before {
+            content: '→';
+            position: absolute;
+            right: -10px;
+            top: -10px;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* 数据流样式 */
+        .data-flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .flow-arrow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: var(--light-bg);
+            border-radius: 20px;
+            border: 2px dashed var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .flow-arrow::after {
+            content: '→';
+            margin-left: 10px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* 交互部分 */
+        .interactive-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: var(--shadow);
+        }
+
+        .interactive-section h2 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .component-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .detail-card {
+            background: var(--light-bg);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .detail-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .detail-card p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        footer {
+            background: var(--text-color);
+            color: white;
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .layer {
+                flex-direction: column;
+            }
+
+            .horizontal-connection {
+                width: 2px;
+                height: 40px;
+            }
+
+            .horizontal-connection::before {
+                content: '↓';
+                right: -5px;
+                top: auto;
+                bottom: -10px;
+            }
+
+            .component-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <h1>Transformer 模型架构流程图</h1>
+            <p>Attention Is All You Need (2017) - 基于自注意力机制的深度学习模型</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: var(--embedding-color);"></div>
+                <span>输入/嵌入层</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: var(--attention-color);"></div>
+                <span>注意力机制</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: var(--feedforward-color);"></div>
+                <span>前馈网络</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: var(--normalization-color);"></div>
+                <span>层归一化</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: var(--residual-color);"></div>
+                <span>残差连接</span>
+            </div>
+        </div>
+
+        <div class="flowchart-container">
+            <!-- 输入部分 -->
+            <div class="encoder-section">
+                <h2 class="section-title">编码器 (Encoder)</h2>
+
+                <div class="data-flow">
+                    <div class="flow-arrow">输入序列</div>
+                </div>
+
+                <div class="connection">
+                    <div class="connection-line"></div>
+                </div>
+
+                <!-- 输入嵌入 -->
+                <div class="layer">
+                    <div class="layer-box input-embedding">
+                        <h3>输入嵌入</h3>
+                        <p>将输入词转换为向量表示</p>
+                        <ul class="component-list">
+                            <li>词嵌入 (Word Embeddings)</li>
+                            <li>维度: d_model = 512</li>
+                            <li>可学习的参数矩阵</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="connection">
+                    <div class="connection-line"></div>
+                </div>
+
+                <!-- 位置编码 -->
+                <div class="layer">
+                    <div class="layer-box positional-encoding">
+                        <h3>位置编码</h3>
+                        <p>添加序列位置信息</p>
+                        <ul class="component-list">
+                            <li>正弦/余弦函数</li>
+                            <li>固定编码，非学习参数</li>
+                            <li>保留序列顺序信息</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="connection">
+                    <div class="connection-line"></div>
+                </div>
+
+                <!-- 编码器层堆叠 -->
+                <div class="encoder-layers">
+                    <div class="data-flow">
+                        <div class="flow-arrow">N × 编码器层 (N=6)</div>
+                    </div>
+
+                    <!-- 单个编码器层 -->
+                    <div class="layer">
+                        <div class="layer-box multi-head-attention">
+                            <h3>多头自注意力</h3>
+                            <p>Multi-Head Self-Attention</p>
+                            <ul class="component-list">
+                                <li>h = 8 个注意力头</li>
+                                <li>缩放点积注意力</li>
+                                <li>并行计算</li>
+                            </ul>
+                        </div>
+
+                        <div class="horizontal-connection"></div>
+
+                        <div class="layer-box add-norm">
+                            <h3>Add & Norm</h3>
+                            <p>残差连接 + 层归一化</p>
+                            <ul class="component-list">
+                                <li>残差连接 (Residual)</li>
+                                <li>层归一化 (LayerNorm)</li>
+                                <li>稳定训练过程</li>
+                            </ul>
+                        </div>
+
+                        <div class="horizontal-connection"></div>
+
+                        <div class="layer-box feed-forward">
+                            <h3>前馈网络</h3>
+                            <p>Position-wise Feed-Forward</p>
+                            <ul class="component-list">
+                                <li>两层全连接网络</li>
+                                <li>ReLU 激活函数</li>
+                                <li>位置独立处理</li>
+                            </ul>
+                        </div>
+
+                        <div class="horizontal-connection"></div>
+
+                        <div class="layer-box add-norm">
+                            <h3>Add & Norm</h3>
+                            <p>残差连接 + 层归一化</p>
+                            <ul class="component-list">
+                                <li>第二次残差连接</li>
+                                <li>第二次层归一化</li>
+                                <li>输出到下一层</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="connection">
+                    <div class="connection-line"></div>
+                </div>
+            </div>
+
+            <!-- 编码器输出到解码器 -->
+            <div class="data-flow">
+                <div class="flow-arrow">编码器输出 → 解码器</div>
+            </div>
+
+            <!-- 解码器部分 -->
+            <div class="decoder-section">
+                <h2 class="section-title">解码器 (Decoder)</h2>
+
+                <div class="data-flow">
+                    <div class="flow-arrow">目标序列 (右移)</div>
+                </div>
+
+                <div class="connection">
+                    <div class="connection-line"></div>
+                </div>
+
+                <!-- 输出嵌入 -->
+                <div class="layer">
+                    <div class="layer-box input-embedding">
+                        <h3>输出嵌入</h3>
+                        <p>目标序列词嵌入</p>
+                        <ul class="component-list">
+                            <li>共享输入嵌入矩阵</li>
+                            <li>维度: d_model = 512</li>
+                            <li>位置编码相加</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="connection">
+                    <div class="connection-line"></div>
+                </div>
+
+                <!-- 解码器层堆叠 -->
+                <div class="decoder-layers">
+                    <div class="data-flow">
+                        <div class="flow-arrow">N × 解码器层 (N=6)</div>
+                    </div>
+
+                    <!-- 单个解码器层 -->
+                    <div class="layer">
+                        <!-- 掩蔽多头注意力 -->
+                        <div class="layer-box multi-head-attention">
+                            <h3>掩蔽多头注意力</h3>
+                            <p>Masked Multi-Head Attention</p>
+                            <ul class="component-list">
+                                <li>防止信息泄露</li>
+                                <li>因果掩码 (Causal Mask)</li>
+                                <li>只关注前面位置</li>
+                            </ul>
+                        </div>
+
+                        <div class="horizontal-connection"></div>
+
+                        <div class="layer-box add-norm">
+                            <h3>Add & Norm</h3>
+                            <p>残差连接 + 层归一化</p>
+                        </div>
+
+                        <div class="horizontal-connection"></div>
+
+                        <!-- 编码器-解码器注意力 -->
+                        <div class="layer-box multi-head-attention">
+                            <h3>编码器-解码器注意力</h3>
+                            <p>Encoder-Decoder Attention</p>
+                            <ul class="component-list">
+                                <li>Query: 解码器状态</li>
+                                <li>Key/Value: 编码器输出</li>
+                                <li>跨注意力机制</li>
+                            </ul>
+                        </div>
+
+                        <div class="horizontal-connection"></div>
+
+                        <div class="layer-box add-norm">
+                            <h3>Add & Norm</h3>
+                            <p>残差连接 + 层归一化</p>
+                        </div>
+
+                        <div class="horizontal-connection"></div>
+
+                        <!-- 前馈网络 -->
+                        <div class="layer-box feed-forward">
+                            <h3>前馈网络</h3>
+                            <p>Position-wise Feed-Forward</p>
+                        </div>
+
+                        <div class="horizontal-connection"></div>
+
+                        <div class="layer-box add-norm">
+                            <h3>Add & Norm</h3>
+                            <p>残差连接 + 层归一化</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="connection">
+                    <div class="connection-line"></div>
+                </div>
+
+                <!-- 线性层和Softmax -->
+                <div class="layer">
+                    <div class="layer-box output-layer">
+                        <h3>线性层</h3>
+                        <p>Linear Transformation</p>
+                        <ul class="component-list">
+                            <li>维度: d_model → vocab_size</li>
+                            <li>共享嵌入矩阵权重</li>
+                        </ul>
+                    </div>
+
+                    <div class="horizontal-connection"></div>
+
+                    <div class="layer-box output-layer">
+                        <h3>Softmax</h3>
+                        <p>概率分布</p>
+                        <ul class="component-list">
+                            <li>输出概率分布</li>
+                            <li>选择最高概率词</li>
+                            <li>自回归生成</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="connection">
+                    <div class="connection-line"></div>
+                </div>
+
+                <div class="data-flow">
+                    <div class="flow-arrow">输出序列</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 交互式解释部分 -->
+        <div class="interactive-section">
+            <h2><i class="fas fa-info-circle"></i> Transformer 核心组件详解</h2>
+
+            <div class="component-details">
+                <div class="detail-card">
+                    <h4>自注意力机制 (Self-Attention)</h4>
+                    <p>计算输入序列中每个位置与其他所有位置的相关性权重，允许模型关注序列中不同部分的信息。</p>
+                    <p><strong>公式:</strong> Attention(Q,K,V) = softmax(QKᵀ/√d_k)V</p>
+                </div>
+
+                <div class="detail-card">
+                    <h4>多头注意力 (Multi-Head Attention)</h4>
+                    <p>将注意力机制并行执行多次，每个"头"学习不同的注意力模式，最后将结果拼接起来。</p>
+                    <p><strong>优点:</strong> 增强模型表达能力，捕捉不同类型的依赖关系。</p>
+                </div>
+
+                <div class="detail-card">
+                    <h4>位置编码 (Positional Encoding)</h4>
+                    <p>由于Transformer没有循环或卷积结构，需要显式添加位置信息。使用正弦和余弦函数生成固定编码。</p>
+                    <p><strong>公式:</strong> PE(pos,2i) = sin(pos/10000^(2i/d_model))</p>
+                </div>
+
+                <div class="detail-card">
+                    <h4>残差连接 (Residual Connection)</h4>
+                    <p>将层的输入直接加到输出上，缓解梯度消失问题，允许训练更深的网络。</p>
+                    <p><strong>公式:</strong> Output = LayerNorm(x + Sublayer(x))</p>
+                </div>
+
+                <div class="detail-card">
+                    <h4>前馈网络 (Feed-Forward Network)</h4>
+                    <p>每个位置独立应用相同的两层全连接网络，增加非线性变换能力。</p>
+                    <p><strong>公式:</strong> FFN(x) = max(0, xW₁ + b₁)W₂ + b₂</p>
+                </div>
+
+                <div class="detail-card">
+                    <h4>层归一化 (Layer Normalization)</h4>
+                    <p>对每个样本的所有特征进行归一化，稳定训练过程，加速收敛。</p>
+                    <p><strong>作用:</strong> 减少内部协变量偏移，提高训练稳定性。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="interactive-section">
+            <h2><i class="fas fa-code"></i> 模型参数配置</h2>
+            <div class="component-details">
+                <div class="detail-card">
+                    <h4>基础模型参数</h4>
+                    <ul class="component-list" style="border: none;">
+                        <li>d_model = 512 (模型维度)</li>
+                        <li>d_ff = 2048 (前馈网络维度)</li>
+                        <li>h = 8 (注意力头数量)</li>
+                        <li>N = 6 (编码器/解码器层数)</li>
+                        <li>dropout = 0.1</li>
+                    </ul>
+                </div>
+
+                <div class="detail-card">
+                    <h4>训练配置</h4>
+                    <ul class="component-list" style="border: none;">
+                        <li>优化器: Adam (β₁=0.9, β₂=0.98)</li>
+                        <li>学习率: 随步数变化</li>
+                        <li>标签平滑: ε=0.1</li>
+                        <li>批次大小: 25,000 tokens</li>
+                    </ul>
+                </div>
+
+                <div class="detail-card">
+                    <h4>应用场景</h4>
+                    <ul class="component-list" style="border: none;">
+                        <li>机器翻译 (原始应用)</li>
+                        <li>文本生成 (GPT系列)</li>
+                        <li>文本理解 (BERT系列)</li>
+                        <li>多模态任务 (Vision Transformer)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 Transformer 架构可视化</p>
+            <p style="margin-top: 10px; opacity: 0.8;">基于论文 "Attention Is All You Need" (Vaswani et al., 2017)</p>
+            <div style="margin-top: 20px;">
+                <button onclick="toggleDarkMode()" style="background: white; color: #1f2937; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">
+                    <i class="fas fa-moon"></i> 切换深色模式
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 交互功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 层框点击效果
+            const layerBoxes = document.querySelectorAll('.layer-box');
+            layerBoxes.forEach(box => {
+                box.addEventListener('click', function() {
+                    // 移除其他框的高亮
+                    layerBoxes.forEach(b => {
+                        b.style.boxShadow = '';
+                        b.style.borderRight = '';
+                    });
+
+                    // 高亮当前框
+                    this.style.boxShadow = '0 0 0 3px rgba(79, 70, 229, 0.3)';
+                    this.style.borderRight = '3px solid var(--primary-color)';
+
+                    // 显示对应组件的详细信息
+                    const componentName = this.querySelector('h3').textContent;
+                    console.log(`选中组件: ${componentName}`);
+                });
+            });
+
+            // 悬停显示连接线
+            const connections = document.querySelectorAll('.connection-line, .horizontal-connection');
+            connections.forEach(conn => {
+                conn.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = 'var(--secondary-color)';
+                    this.style.height = '4px';
+                });
+
+                conn.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = 'var(--primary-color)';
+                    this.style.height = '2px';
+                });
+            });
+        });
+
+        // 深色模式切换
+        function toggleDarkMode() {
+            const body = document.body;
+            const isDark = body.classList.toggle('dark-mode');
+
+            if (isDark) {
+                // 深色模式变量
+                body.style.setProperty('--text-color', '#f3f4f6');
+                body.style.setProperty('--light-bg', '#1f2937');
+                body.style.setProperty('--card-bg', '#374151');
+                body.style.setProperty('--border-color', '#4b5563');
+                document.querySelector('button').innerHTML = '<i class="fas fa-sun"></i> 切换浅色模式';
+            } else {
+                // 浅色模式变量
+                body.style.setProperty('--text-color', '#1f2937');
+                body.style.setProperty('--light-bg', '#f8fafc');
+                body.style.setProperty('--card-bg', 'white');
+                body.style.setProperty('--border-color', '#e5e7eb');
+                document.querySelector('button').innerHTML = '<i class="fas fa-moon"></i> 切换深色模式';
+            }
+        }
+
+        // 打印功能
+        function printDiagram() {
+            window.print();
+        }
+    </script>
+</body>
+</html>
